@@ -13,9 +13,11 @@ import com.company.enroller.model.Meeting;
 public class MeetingService {
 
 	DatabaseConnector connector;
+	Transaction transaction;
 
 	public MeetingService() {
 		connector = DatabaseConnector.getInstance();
+		transaction = connector.getSession().beginTransaction();
 	}
 
 	public Collection<Meeting> getAll() {
@@ -25,15 +27,23 @@ public class MeetingService {
 	}
 
 	public Meeting findById(long id){
-		String hql = "FROM Participant WHERE id = " + id;
+		String hql = "FROM Meeting WHERE id = " + id;
 		return (Meeting) connector.getSession().createQuery(hql).uniqueResult();
 	}
 
 	public Meeting add(Meeting meeting){
-		Transaction transaction = connector.getSession().beginTransaction();
 		connector.getSession().save(meeting);
 		transaction.commit();
 		return meeting;
 	}
 
+	public void remove(Meeting meeting){
+		connector.getSession().delete(meeting);
+		transaction.commit();
+	}
+
+	public void update(Meeting meeting){
+		connector.getSession().update(meeting);
+		transaction.commit();
+	}
 }

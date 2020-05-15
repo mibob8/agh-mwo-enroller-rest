@@ -38,6 +38,47 @@ public class MeetingRestController
         return new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/addParticipant/{id}", method = RequestMethod.POST)
+    public ResponseEntity<?> addMeetingParticipant(@PathVariable("id") long id, @RequestBody Participant participant)
+    {
+        Meeting meeting = meetingService.findById(id);
+
+        if (meeting == null)
+        {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+        meeting.addParticipant(participant);
+
+        return new ResponseEntity<Collection<Participant>>(meeting.getParticipants(), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/getParticipants/{id}", method = RequestMethod.GET)
+    public ResponseEntity<?> getMeetingParticipants(@PathVariable("id") long id)
+    {
+        Meeting meeting = meetingService.findById(id);
+        if (meeting == null)
+        {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<Collection<Participant>>(meeting.getParticipants(), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/removeMeeting/{id}", method = RequestMethod.GET)
+    public ResponseEntity<?> removeMeeting(@PathVariable("id") long id)
+    {
+        Meeting meeting = meetingService.findById(id);
+        if (meeting == null)
+        {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+        meetingService.remove(meeting);
+
+        return new ResponseEntity<Collection<Meeting>>(meetingService.getAll(), HttpStatus.OK);
+    }
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> registerMeeting(@RequestBody Meeting meeting)
     {
@@ -48,6 +89,19 @@ public class MeetingRestController
         }
 
         meetingService.add(newMeeting);
+        return new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/updateMeeting", method = RequestMethod.POST)
+    public ResponseEntity<?> updateMeeting(@RequestBody Meeting meeting)
+    {
+        Meeting newMeeting = meetingService.findById(meeting.getId());
+        if (newMeeting != null)
+        {
+            return new ResponseEntity("Nie znaleziono spotkania do aktualizacji", HttpStatus.BAD_REQUEST);
+        }
+
+        meetingService.update(meeting);
         return new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
     }
 }

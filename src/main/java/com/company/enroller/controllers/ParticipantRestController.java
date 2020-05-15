@@ -25,7 +25,7 @@ public class ParticipantRestController {
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 
-	public ResponseEntity<?> getMeeting(@PathVariable("id") String login) {
+	public ResponseEntity<?> getParticipant(@PathVariable("id") String login) {
 		Participant participant = participantService.findByLogin(login);
 		if (participant == null) {
 			return new ResponseEntity(HttpStatus.NOT_FOUND);
@@ -45,5 +45,4 @@ public class ParticipantRestController {
 		participantService.add(participant);
 		return new ResponseEntity<Participant>(participant, HttpStatus.OK);
 	}
-
 }
